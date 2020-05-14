@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-05-12T12:57:43.647517+00:00",
+  "timestamp": "2020-05-14T16:11:47.857393+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -613,7 +613,7 @@
       "labels": [],
       "body": "I was looking through a code coverage map of my implementation and realized that `default_pkSm` is never actually used anywhere. `KeySchedule` takes in a `pkSm` and uses it to sanity-check the given `mode`, and then uses it nowhere in the key schedule itself. Should `pkSm` be removed as an argument?",
       "createdAt": "2020-05-09T18:17:57Z",
-      "updatedAt": "2020-05-12T12:56:43Z",
+      "updatedAt": "2020-05-12T16:14:25Z",
       "closedAt": null,
       "comments": [
         {
@@ -622,6 +622,13 @@
           "body": "It's there primarily to help distinguish the mode, so I think we ought to keep it. That said, it might encourage implementations to pass it when not needed. \r\n\r\nIf you were to remove it, how would you specify the mode check?",
           "createdAt": "2020-05-12T12:56:43Z",
           "updatedAt": "2020-05-12T12:56:43Z"
+        },
+        {
+          "author": "rozbb",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Yeah, if you want to keep it in I don't have any strong suggestions to make it more elegant. FWIW I found it more ergonomic to implement `mode` as an enum that contains precisely the things it needs to\r\n\r\n```rust\r\nenum OpModeR<Dh: DiffieHellman, Kd: Kdf> {\r\n    Base,\r\n    Psk(PskBundle<Kd>),\r\n    Auth(Dh::PublicKey),\r\n    AuthPsk(Dh::PublicKey, PskBundle<Kd>),\r\n}\r\n```",
+          "createdAt": "2020-05-12T16:14:25Z",
+          "updatedAt": "2020-05-12T16:14:25Z"
         }
       ]
     },
@@ -6439,6 +6446,48 @@
         }
       ],
       "reviews": []
+    },
+    {
+      "number": 73,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDE4MDY4Nzky",
+      "title": "Clarify psk overwriting",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/73",
+      "state": "MERGED",
+      "author": "raphaelrobert",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2020-05-14T15:22:30Z",
+      "updatedAt": "2020-05-14T16:11:03Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "e955931cdc4e9708da2fd4d905dd920fc4668c85",
+      "headRepository": "raphaelrobert/draft-irtf-cfrg-hpke",
+      "headRefName": "patch-1",
+      "headRefOid": "90399ce722d70c741c1bd467a548af52c28cc7b1",
+      "closedAt": "2020-05-14T16:11:03Z",
+      "mergedAt": "2020-05-14T16:11:03Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "a9e89a2fa93faf4618590077b517857c06192ea0"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDExOTYyMzU4",
+          "commit": {
+            "abbreviatedOid": "90399ce"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thank you!",
+          "createdAt": "2020-05-14T16:10:59Z",
+          "updatedAt": "2020-05-14T16:10:59Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
