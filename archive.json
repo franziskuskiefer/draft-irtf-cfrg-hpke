@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-05-14T16:11:47.857393+00:00",
+  "timestamp": "2020-05-19T15:00:33.034826+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -613,7 +613,7 @@
       "labels": [],
       "body": "I was looking through a code coverage map of my implementation and realized that `default_pkSm` is never actually used anywhere. `KeySchedule` takes in a `pkSm` and uses it to sanity-check the given `mode`, and then uses it nowhere in the key schedule itself. Should `pkSm` be removed as an argument?",
       "createdAt": "2020-05-09T18:17:57Z",
-      "updatedAt": "2020-05-12T16:14:25Z",
+      "updatedAt": "2020-05-17T20:15:24Z",
       "closedAt": null,
       "comments": [
         {
@@ -629,6 +629,20 @@
           "body": "Yeah, if you want to keep it in I don't have any strong suggestions to make it more elegant. FWIW I found it more ergonomic to implement `mode` as an enum that contains precisely the things it needs to\r\n\r\n```rust\r\nenum OpModeR<Dh: DiffieHellman, Kd: Kdf> {\r\n    Base,\r\n    Psk(PskBundle<Kd>),\r\n    Auth(Dh::PublicKey),\r\n    AuthPsk(Dh::PublicKey, PskBundle<Kd>),\r\n}\r\n```",
           "createdAt": "2020-05-12T16:14:25Z",
           "updatedAt": "2020-05-12T16:14:25Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yep, I would suspect most folks to implement it this way. \r\n\r\n@bifurcation, this seems editorial. Do you have a preference here?",
+          "createdAt": "2020-05-15T14:54:22Z",
+          "updatedAt": "2020-05-15T14:54:22Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think `pkSm` can be removed.  The only thing it signals is that you're in an authenticated mode, which the `mode` argument already indicates.  You could then also simplify `VerifyMode` to something like:\r\n\r\n```\r\ndef VerifyPSKInputs(mode, psk, pskID):\r\n  got_psk = (psk != default_psk)\r\n  if got_psk != (pskID != default_pskID):\r\n    raise Exception(\"Inconsistent PSK inputs\")\r\n\r\n  if got_psk and (mode in [mode_base, mode_auth]):\r\n    raise Exception(\"PSK input provided when not needed\")\r\n  if not got_psk and (mode in [mode_psk, mode_auth_psk]):\r\n    raise Exception(\"Missing required PSK input\")\r\n```\r\n\r\nI agree that most languages will have more elegant constructs (inlcuding python), but the spec needs to be language agnostic.",
+          "createdAt": "2020-05-17T20:15:24Z",
+          "updatedAt": "2020-05-17T20:15:24Z"
         }
       ]
     },
@@ -644,7 +658,132 @@
       "labels": [],
       "body": "This is just an editorial comment. The spec doesn't seem to define the contents of a \"context\" very clearly. Section 5 says:\r\n> A \"context\" encodes the AEAD algorithm and key in use, and manages the nonces used so that the same nonce is not used with multiple plaintexts.\r\n\r\nBut it also has an exporter secret. Then section 5.1 says:\r\n> return Context(key, nonce, exporter_secret)\r\n\r\nBut we haven't defined the `Context` function yet. I'm guessing the intent is that `Context` produces some sort of record type with those field names? But that wouldn't initialize `Context.seq` used later in 5.2. (Confusingly, this `Context` is distinct from the `context` variable which contains an `HPKEContext` structure. Maybe the latter could be renamed?)\r\n\r\nThen 5.2 lists out the contents of a \"context' more explicitly, including the first mention of a sequence number. But it omits the exporter secret again. (Should \"The sender's context MUST be used for encryption only. Similarly, the recipient's context MUST be used for decryption only.\" be rephrased? One could read that as saying export is also not okay.)\r\n\r\nThen 5.3 mentions a context having an \"exporter secret\", but this is actually the only instance of that phrase in the document.",
       "createdAt": "2020-05-11T19:05:28Z",
-      "updatedAt": "2020-05-11T19:05:28Z",
+      "updatedAt": "2020-05-14T17:14:50Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "raphaelrobert",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I agree with `Context` being somewhat confusing. I propose to rename it to `AEADContext` and clearly define the attributes (key, nonce, exporter, secret).",
+          "createdAt": "2020-05-14T16:21:06Z",
+          "updatedAt": "2020-05-14T16:21:06Z"
+        },
+        {
+          "author": "davidben",
+          "authorAssociation": "NONE",
+          "body": "The \"context\" does seem to be related to the entire HPKE exchange from how it's constructed. Since AEADs already mean something, AEADContext would probably result in APIs calling it `HPKE_AEAD_CONTEXT` with nothing actually exposed as `HPKE_CONTEXT`. Seems renaming the existing HPKEContext would work better.",
+          "createdAt": "2020-05-14T17:14:49Z",
+          "updatedAt": "2020-05-14T17:14:49Z"
+        }
+      ]
+    },
+    {
+      "number": 74,
+      "id": "MDU6SXNzdWU2MTg3ODMzODc=",
+      "title": "Outdated reference",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/74",
+      "state": "OPEN",
+      "author": "raphaelrobert",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [
+        "chris-wood"
+      ],
+      "labels": [],
+      "body": "In \"DH-Based KEM\" the paragraph \r\n\r\n> The GenerateKeyPair, Marshal, and Unmarshal functions are the same as for the underlying DH group. The Marshal functions for the curves referenced in {#ciphersuites} are as follows:\r\n\r\nreferences the #ciphersuites section that no longer seems to exist.",
+      "createdAt": "2020-05-15T08:12:10Z",
+      "updatedAt": "2020-05-15T14:51:13Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 75,
+      "id": "MDU6SXNzdWU2MTkwMTU0MjM=",
+      "title": "Shared secret size for P-256",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/75",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "It's currently 32 bytes, i.e., just the x-coordinate of the point. But Npk suggests it should be a fully-encoded public key. Which do we prefer?\r\n\r\ncc @blipp @bifurcation \r\n\r\n(Thanks to Michael Scott for raising this!)",
+      "createdAt": "2020-05-15T14:37:46Z",
+      "updatedAt": "2020-05-19T14:53:54Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "No opinion.  If 65 bytes is more consistent with other modes, that's fine.  ",
+          "createdAt": "2020-05-17T20:04:47Z",
+          "updatedAt": "2020-05-17T20:04:47Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Let's use the encoded public keys, then, and update the test vectors!",
+          "createdAt": "2020-05-18T13:47:36Z",
+          "updatedAt": "2020-05-18T13:47:36Z"
+        },
+        {
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I agree that `dh` should be understood as being a marshalled curve point that was returned by `DH` (if the marshal is done internally in `DH` or afterwards depends on the implementation I guess) \u2013 at least that's what I had in mind when working on my pull requests to the draft. Should we clarify it in the text?\r\n\r\nEdited to add: I should clarify that in the authenticated modes, `dh` is a concatenation of two marshalled curve points.",
+          "createdAt": "2020-05-19T13:31:58Z",
+          "updatedAt": "2020-05-19T13:33:38Z"
+        },
+        {
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I added pull request #80 in an attempt to clarify some occurrences of Ndh and Nzz.",
+          "createdAt": "2020-05-19T14:53:54Z",
+          "updatedAt": "2020-05-19T14:53:54Z"
+        }
+      ]
+    },
+    {
+      "number": 76,
+      "id": "MDU6SXNzdWU2MTkwMTgyMTQ=",
+      "title": "ExtractAndExpand input parameters",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/76",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "From Michael Scott:\r\n\r\n> A minor observation. In ExtractAndExpand the salt parameter is zero(Nh).\r\n>\r\n> In fact this is the same as using zero(0), as HMAC internally pads this up to a blocksize of zeros.\r\n>\r\n> So for example if using SHA512 and Nh=64, the hash blocksize is 128, and zero(0) gets padded up to 128 zeros, as does zero(64) . In fact the parameter to zero(.) is irrelevant.\r\n\r\nWe might consider `zero(2*Nh)` or `zero(0)`. What do you think, @blipp?",
+      "createdAt": "2020-05-15T14:40:16Z",
+      "updatedAt": "2020-05-19T13:13:57Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The observation is only true for HKDF, not necessarily for other KDFs.  For similar reasons, we shouldn't do `zero(2*Nh)`.\r\n\r\nThat said, it doesn't really seem like the salt is adding anything, so I would be fine with `zero(0)` or `\"\"` or however we want to write it.",
+          "createdAt": "2020-05-17T20:22:12Z",
+          "updatedAt": "2020-05-17T20:22:12Z"
+        },
+        {
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I agree with using something like `zero(0)` or `\"\"` to make clear that we want to \u201cnot provide\u201d the salt value, like [RFC 5869 (HKDF)](https://hyp.is/PvmompnREeq4Ddvtm_Is0w/tools.ietf.org/html/rfc5869) formulates it:\r\n\r\n```\r\n2.2.  Step 1: Extract\r\n\r\n[\u2026]\r\n\r\n   Inputs:\r\n      salt     optional salt value (a non-secret random value);\r\n               if not provided, it is set to a string of HashLen zeros.\r\n      IKM      input keying material\r\n```\r\n\r\nI think `zero(0)` would be good, because we use this as the default pskID, too.",
+          "createdAt": "2020-05-19T13:13:57Z",
+          "updatedAt": "2020-05-19T13:13:57Z"
+        }
+      ]
+    },
+    {
+      "number": 77,
+      "id": "MDU6SXNzdWU2MTkwOTU0MjY=",
+      "title": "Caveat in test vectors",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/77",
+      "state": "OPEN",
+      "author": "raphaelrobert",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The plaintext is always the same, but the nonces and AADs differ by just one bit, which is hard to spot and easily missed.",
+      "createdAt": "2020-05-15T16:26:54Z",
+      "updatedAt": "2020-05-15T16:26:54Z",
       "closedAt": null,
       "comments": []
     }
@@ -6485,6 +6624,108 @@
           "body": "Thank you!",
           "createdAt": "2020-05-14T16:10:59Z",
           "updatedAt": "2020-05-14T16:10:59Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 78,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDE5ODI2NjI3",
+      "title": "Updated test-vectors.json",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/78",
+      "state": "OPEN",
+      "author": "rozbb",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The test vectors come from the latest version of `go-hpke`.\r\n\r\nThis does not update the test vectors in the spec itself. I don't know how those are generated, but I assume there is some script to automate the process.\r\n\r\nSolves #75 ",
+      "createdAt": "2020-05-19T01:41:23Z",
+      "updatedAt": "2020-05-19T03:32:51Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "a9e89a2fa93faf4618590077b517857c06192ea0",
+      "headRepository": "rozbb/draft-irtf-cfrg-hpke",
+      "headRefName": "test_vec",
+      "headRefOid": "6a49ec56262760f7a9a4d486b5072a419c62a8e2",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 79,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDE5ODUzMzY3",
+      "title": "Defined UnmarshalSk",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/79",
+      "state": "OPEN",
+      "author": "rozbb",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently, HPKE exposes no way of deriving a key pair given random bytes. This functionality is necessary in MLS (in order to have multiple participants derive their ancestor nodes' secret keys). I propose the use of `UnmarshalSk` to do precisely this.\r\n\r\n`UnmarshalSk` need not be a total function. In NIST curves, for example, the `Octet-String-to-Field-Element` function (defined in [SECG](https://secg.org/sec1-v2.pdf)) will return \"invalid\" for inputs that represent integers that are greater than or equal to the modulus. I haven't written it anywhere, but I would like to recommend that any end users who want to call `UnmarshalSk` on some deterministically derived bytes use a KDF chain to do rejection sampling.",
+      "createdAt": "2020-05-19T03:25:25Z",
+      "updatedAt": "2020-05-19T03:31:49Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "a9e89a2fa93faf4618590077b517857c06192ea0",
+      "headRepository": "rozbb/draft-irtf-cfrg-hpke",
+      "headRefName": "unmarshal_sk",
+      "headRefOid": "dab33011cef06015de276752363a73062b898005",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "rozbb",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "There might be a concern that this could just as well be implemented directly at the DHKEM level, and left out of the HPKE spec. The downside of this is that MLS would then have to depend on an HPKE implementation as well a compatible underlying DHKEM implementation.\r\n\r\nI believe that this abstraction is the only thing preventing an HPKE library from abstracting all KEM details away from MLS. This should vastly simplify implementation.",
+          "createdAt": "2020-05-19T03:31:49Z",
+          "updatedAt": "2020-05-19T03:31:49Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 80,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDIwMTM4MDAx",
+      "title": "Clarify between KEM and DH shared secret",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/80",
+      "state": "MERGED",
+      "author": "blipp",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Quick draft of a pull request to make the distinction between DH shared secret and KEM shared secret clearer.",
+      "createdAt": "2020-05-19T14:00:06Z",
+      "updatedAt": "2020-05-19T14:59:45Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "a9e89a2fa93faf4618590077b517857c06192ea0",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_shared_secrets",
+      "headRefOid": "afe715d9627e073a0eddd9bd490d45809fe8f6d0",
+      "closedAt": "2020-05-19T14:59:45Z",
+      "mergedAt": "2020-05-19T14:59:45Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "46c36e13e85bcb4c8a5233c434778c6bd0bb97f4"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE0NTM3NjQw",
+          "commit": {
+            "abbreviatedOid": "afe715d"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2020-05-19T14:59:40Z",
+          "updatedAt": "2020-05-19T14:59:40Z",
           "comments": []
         }
       ]
