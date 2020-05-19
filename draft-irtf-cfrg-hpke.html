@@ -840,7 +840,7 @@ table.left {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Barnes, et al.</td>
-<td class="center">Expires 15 November 2020</td>
+<td class="center">Expires 20 November 2020</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -853,12 +853,12 @@ table.left {
 <dd class="internet-draft">draft-irtf-cfrg-hpke-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2020-05-14" class="published">14 May 2020</time>
+<time datetime="2020-05-19" class="published">19 May 2020</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2020-11-15">15 November 2020</time></dd>
+<dd class="expires"><time datetime="2020-11-20">20 November 2020</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -907,7 +907,7 @@ primitives.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 15 November 2020.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 20 November 2020.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1268,23 +1268,23 @@ public key <code>pk</code><a href="#section-4-2.1.2.2" class="pilcrow">¶</a>
 <li id="section-4-2.1.2.3">Unmarshal(enc): Parse a fixed-length byte string to recover a
 public key<a href="#section-4-2.1.2.3" class="pilcrow">¶</a>
 </li>
-<li id="section-4-2.1.2.4">Encap(pk): Generate an ephemeral, fixed-length symmetric key and
+<li id="section-4-2.1.2.4">Encap(pk): Generate an ephemeral, fixed-length symmetric key (the KEM shared secret) and
 a fixed-length encapsulation of that key that can be decapsulated
 by the holder of the private key corresponding to pk<a href="#section-4-2.1.2.4" class="pilcrow">¶</a>
 </li>
 <li id="section-4-2.1.2.5">Decap(enc, sk): Use the private key <code>sk</code> to recover the ephemeral
-symmetric key from its encapsulated representation <code>enc</code><a href="#section-4-2.1.2.5" class="pilcrow">¶</a>
+symmetric key (the KEM shared secret) from its encapsulated representation <code>enc</code><a href="#section-4-2.1.2.5" class="pilcrow">¶</a>
 </li>
 <li id="section-4-2.1.2.6">AuthEncap(pkR, skS) (optional): Same as Encap(), but the outputs
-encode an assurance that the ephemeral shared key is known only
+encode an assurance that the KEM shared secret key is known only
 to the holder of the private key <code>skS</code><a href="#section-4-2.1.2.6" class="pilcrow">¶</a>
 </li>
 <li id="section-4-2.1.2.7">AuthDecap(skR, pkS) (optional): Same as Decap(), but the holder
-of the private key <code>skR</code> is assured that the ephemeral shared
+of the private key <code>skR</code> is assured that the KEM shared secret
 key is known only to the holder of the private key corresponding
 to <code>pkS</code><a href="#section-4-2.1.2.7" class="pilcrow">¶</a>
 </li>
-<li id="section-4-2.1.2.8">Nzz: The length in bytes of a shared secret produced by this KEM<a href="#section-4-2.1.2.8" class="pilcrow">¶</a>
+<li id="section-4-2.1.2.8">Nzz: The length in bytes of a KEM shared secret produced by this KEM<a href="#section-4-2.1.2.8" class="pilcrow">¶</a>
 </li>
 <li id="section-4-2.1.2.9">Nenc: The length in bytes of an encapsulated key produced by this KEM<a href="#section-4-2.1.2.9" class="pilcrow">¶</a>
 </li>
@@ -1428,8 +1428,10 @@ calls (LabeledExtract, LabeledExpand) of the appropriate KDF when
 implementing DHKEM. See <a href="#kdf-choice" class="xref">Section 8.3</a> for a comment on the choice of
 a KDF for the remainder of HPKE, and <a href="#domain-separation" class="xref">Section 8.5</a> for the
 rationale of the labels.<a href="#section-4.1-5" class="pilcrow">¶</a></p>
-<p id="section-4.1-6">For the variants of DHKEM defined in this document, Ndh is equal to Npk,
-and Nzz is equal to the output length of the hash function underlying the KDF.<a href="#section-4.1-6" class="pilcrow">¶</a></p>
+<p id="section-4.1-6">For the variants of DHKEM defined in this document, the size Ndh of the
+Diffie-Hellman shared secret is equal to Npk, and the size Nzz of the
+KEM shared secret is equal to the output length of the hash function
+underlying the KDF.<a href="#section-4.1-6" class="pilcrow">¶</a></p>
 <p id="section-4.1-7">The GenerateKeyPair, Marshal, and Unmarshal functions are the same
 as for the underlying DH group.  The Marshal functions for the
 curves referenced in {#ciphersuites} are as follows:<a href="#section-4.1-7" class="pilcrow">¶</a></p>
@@ -1526,7 +1528,7 @@ key schedule that translates the protocol inputs into an encryption
 context. The key schedule inputs are as follows:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <ul>
 <li id="section-5.1-2.1">
-            <code>zz</code> - A shared secret generated via the KEM for this transaction<a href="#section-5.1-2.1" class="pilcrow">¶</a>
+            <code>zz</code> - A KEM shared secret generated for this transaction<a href="#section-5.1-2.1" class="pilcrow">¶</a>
 </li>
 <li id="section-5.1-2.2">
             <code>info</code> - Application-supplied information (optional; default value
@@ -1625,7 +1627,7 @@ struct {
 for the holder of a given KEM private key.  The <code>SetupBaseS()</code> and
 <code>SetupBaseR()</code> procedures establish contexts that can be used to
 encrypt and decrypt, respectively, for a given private key.<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.1-2">The shared secret produced by the KEM is combined via the KDF
+<p id="section-5.1.1-2">The KEM shared secret is combined via the KDF
 with information describing the key exchange, as well as the
 explicit <code>info</code> parameter provided by the caller.<a href="#section-5.1.1-2" class="pilcrow">¶</a></p>
 <div class="artwork art-text alignLeft" id="section-5.1.1-3">
@@ -1685,7 +1687,7 @@ def SetupPSKR(enc, skR, info, psk, pskID):
 <p id="section-5.1.3-1">This variant extends the base mechanism by allowing the recipient
 to authenticate that the sender possessed a given KEM private key.
 This assurance is based on the assumption that
-<code>AuthDecap(enc, skR, pkS)</code> produces the correct shared secret
+<code>AuthDecap(enc, skR, pkS)</code> produces the correct KEM shared secret
 only if the encapsulated value <code>enc</code> was produced by
 <code>AuthEncap(pkR, skS)</code>, where <code>skS</code> is the private key corresponding
 to <code>pkS</code>.  In other words, only two people could have produced this
@@ -1985,7 +1987,7 @@ Additionally, one of the following checks MUST be ensured: the scalar
 given as input to DH is in the interval [1, n-1] where n is the prime
 order of the subgroup; the result of DH is not the point at infinity.<a href="#section-7.1.2-2" class="pilcrow">¶</a></p>
 <p id="section-7.1.2-3">For the CFRG curves Curve25519 and Curve448, validation of public keys
-is not required. Senders and recipients MUST check whether the shared
+is not required. Senders and recipients MUST check whether the Diffie-Hellman shared
 secret is the all-zero value and abort if so, as described in
 <span>[<a href="#RFC7748" class="xref">RFC7748</a>]</span>.<a href="#section-7.1.2-3" class="pilcrow">¶</a></p>
 </section>
@@ -2239,12 +2241,12 @@ difference into account, in addition to simply using a post-quantum KEM.<a href=
 <a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-security-requirements-on-a-" class="section-name selfRef">Security Requirements on a KEM used within HPKE</a>
         </h3>
 <p id="section-8.2-1">A KEM used within HPKE MUST ensure the following to avoid identity
-mis-binding issues: The shared secret computed by Encap and Decap MUST
+mis-binding issues: The KEM shared secret computed by Encap and Decap MUST
 depend explicitly on the KEM public key pkR and the KEM ciphertext enc.
-The shared secret returned by AuthEncap and AuthDecap MUST explicitly
+The KEM shared secret returned by AuthEncap and AuthDecap MUST explicitly
 depend on the KEM public keys pkR and pkS and the KEM ciphertext enc.
 This is usually implemented by including these values explicitly into
-the context of the key derivation function used to compute the shared
+the context of the key derivation function used to compute the KEM shared
 secret. This is also how DHKEM meets the requirement.<a href="#section-8.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2435,7 +2437,7 @@ maximum possible value is 0xFFFF = 65535.<a href="#section-10.1-1" class="pilcro
 </li>
 <li id="section-10.1-3.2">KEM: The name of the algorithm<a href="#section-10.1-3.2" class="pilcrow">¶</a>
 </li>
-<li id="section-10.1-3.3">Nzz: The length in bytes of a shared secret produced by the algorithm<a href="#section-10.1-3.3" class="pilcrow">¶</a>
+<li id="section-10.1-3.3">Nzz: The length in bytes of a KEM shared secret produced by the algorithm<a href="#section-10.1-3.3" class="pilcrow">¶</a>
 </li>
 <li id="section-10.1-3.4">Nenc: The length in bytes of an encapsulated key produced by the algorithm<a href="#section-10.1-3.4" class="pilcrow">¶</a>
 </li>
