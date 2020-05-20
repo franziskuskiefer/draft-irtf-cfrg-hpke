@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-05-19T15:00:33.034826+00:00",
+  "timestamp": "2020-05-20T14:29:54.214431+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -606,15 +606,15 @@
       "id": "MDU6SXNzdWU2MTUyMzI3ODQ=",
       "title": "pkSm does nothing in KeySchedule",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/71",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "rozbb",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "I was looking through a code coverage map of my implementation and realized that `default_pkSm` is never actually used anywhere. `KeySchedule` takes in a `pkSm` and uses it to sanity-check the given `mode`, and then uses it nowhere in the key schedule itself. Should `pkSm` be removed as an argument?",
       "createdAt": "2020-05-09T18:17:57Z",
-      "updatedAt": "2020-05-17T20:15:24Z",
-      "closedAt": null,
+      "updatedAt": "2020-05-20T14:29:13Z",
+      "closedAt": "2020-05-20T14:29:13Z",
       "comments": [
         {
           "author": "chris-wood",
@@ -682,7 +682,7 @@
       "id": "MDU6SXNzdWU2MTg3ODMzODc=",
       "title": "Outdated reference",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/74",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "raphaelrobert",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -691,24 +691,32 @@
       "labels": [],
       "body": "In \"DH-Based KEM\" the paragraph \r\n\r\n> The GenerateKeyPair, Marshal, and Unmarshal functions are the same as for the underlying DH group. The Marshal functions for the curves referenced in {#ciphersuites} are as follows:\r\n\r\nreferences the #ciphersuites section that no longer seems to exist.",
       "createdAt": "2020-05-15T08:12:10Z",
-      "updatedAt": "2020-05-15T14:51:13Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2020-05-19T15:35:35Z",
+      "closedAt": "2020-05-19T15:35:35Z",
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I pushed a change directly to master to fix this. Thanks!",
+          "createdAt": "2020-05-19T15:35:35Z",
+          "updatedAt": "2020-05-19T15:35:35Z"
+        }
+      ]
     },
     {
       "number": 75,
       "id": "MDU6SXNzdWU2MTkwMTU0MjM=",
       "title": "Shared secret size for P-256",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/75",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "chris-wood",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "It's currently 32 bytes, i.e., just the x-coordinate of the point. But Npk suggests it should be a fully-encoded public key. Which do we prefer?\r\n\r\ncc @blipp @bifurcation \r\n\r\n(Thanks to Michael Scott for raising this!)",
       "createdAt": "2020-05-15T14:37:46Z",
-      "updatedAt": "2020-05-19T14:53:54Z",
-      "closedAt": null,
+      "updatedAt": "2020-05-19T15:35:57Z",
+      "closedAt": "2020-05-19T15:35:57Z",
       "comments": [
         {
           "author": "bifurcation",
@@ -737,6 +745,13 @@
           "body": "I added pull request #80 in an attempt to clarify some occurrences of Ndh and Nzz.",
           "createdAt": "2020-05-19T14:53:54Z",
           "updatedAt": "2020-05-19T14:53:54Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by #78 and #80. Closing.",
+          "createdAt": "2020-05-19T15:35:57Z",
+          "updatedAt": "2020-05-19T15:35:57Z"
         }
       ]
     },
@@ -784,6 +799,22 @@
       "body": "The plaintext is always the same, but the nonces and AADs differ by just one bit, which is hard to spot and easily missed.",
       "createdAt": "2020-05-15T16:26:54Z",
       "updatedAt": "2020-05-15T16:26:54Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 83,
+      "id": "MDU6SXNzdWU2MjE0ODc1NzI=",
+      "title": "Ambiguity about Secret Export",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/83",
+      "state": "OPEN",
+      "author": "ocheron",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Section 5.3 explains secrets are exported with the KDF Expand function but the included code in the same section now calls LabeledExpand with a \"sec\" label.\r\n\r\nThe JSON test vectors contain sample results for the export function, but they match an unlabeled implementation with Expand and not LabeledExpand.",
+      "createdAt": "2020-05-20T06:09:46Z",
+      "updatedAt": "2020-05-20T06:09:46Z",
       "closedAt": null,
       "comments": []
     }
@@ -6633,31 +6664,33 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NDE5ODI2NjI3",
       "title": "Updated test-vectors.json",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/78",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "rozbb",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The test vectors come from the latest version of `go-hpke`.\r\n\r\nThis does not update the test vectors in the spec itself. I don't know how those are generated, but I assume there is some script to automate the process.\r\n\r\nSolves #75 ",
       "createdAt": "2020-05-19T01:41:23Z",
-      "updatedAt": "2020-05-19T03:32:51Z",
+      "updatedAt": "2020-05-19T15:36:10Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
       "baseRefName": "master",
       "baseRefOid": "a9e89a2fa93faf4618590077b517857c06192ea0",
       "headRepository": "rozbb/draft-irtf-cfrg-hpke",
       "headRefName": "test_vec",
       "headRefOid": "6a49ec56262760f7a9a4d486b5072a419c62a8e2",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2020-05-19T15:36:10Z",
+      "mergedAt": "2020-05-19T15:36:10Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "325c94f111732d8fdab54caac26ceee364de8a69"
+      },
       "comments": [],
       "reviews": []
     },
     {
       "number": 79,
       "id": "MDExOlB1bGxSZXF1ZXN0NDE5ODUzMzY3",
-      "title": "Defined UnmarshalSk",
+      "title": "Defined DeriveKeyPair",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/79",
       "state": "OPEN",
       "author": "rozbb",
@@ -6666,13 +6699,13 @@
       "labels": [],
       "body": "Currently, HPKE exposes no way of deriving a key pair given random bytes. This functionality is necessary in MLS (in order to have multiple participants derive their ancestor nodes' secret keys). I propose the use of `UnmarshalSk` to do precisely this.\r\n\r\n`UnmarshalSk` need not be a total function. In NIST curves, for example, the `Octet-String-to-Field-Element` function (defined in [SECG](https://secg.org/sec1-v2.pdf)) will return \"invalid\" for inputs that represent integers that are greater than or equal to the modulus. I haven't written it anywhere, but I would like to recommend that any end users who want to call `UnmarshalSk` on some deterministically derived bytes use a KDF chain to do rejection sampling.",
       "createdAt": "2020-05-19T03:25:25Z",
-      "updatedAt": "2020-05-19T03:31:49Z",
+      "updatedAt": "2020-05-19T23:11:05Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
       "baseRefName": "master",
-      "baseRefOid": "a9e89a2fa93faf4618590077b517857c06192ea0",
+      "baseRefOid": "325c94f111732d8fdab54caac26ceee364de8a69",
       "headRepository": "rozbb/draft-irtf-cfrg-hpke",
       "headRefName": "unmarshal_sk",
-      "headRefOid": "dab33011cef06015de276752363a73062b898005",
+      "headRefOid": "46fc8e01ab57af4697bbd74e72f88a0233f3b13f",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -6684,9 +6717,57 @@
           "body": "There might be a concern that this could just as well be implemented directly at the DHKEM level, and left out of the HPKE spec. The downside of this is that MLS would then have to depend on an HPKE implementation as well a compatible underlying DHKEM implementation.\r\n\r\nI believe that this abstraction is the only thing preventing an HPKE library from abstracting all KEM details away from MLS. This should vastly simplify implementation.",
           "createdAt": "2020-05-19T03:31:49Z",
           "updatedAt": "2020-05-19T03:31:49Z"
+        },
+        {
+          "author": "rozbb",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Following @Bren2010 's advice in https://github.com/mlswg/mls-protocol/pull/338, I reverted the `UnmarshalSk` idea. The problem is that `UnmarshalSk` is insufficient to provide a reliable way to generate a keypair. MLS should not have to rejection-sample a private key, as that might not work for some KEMs.\r\n\r\nInstead, I define the `DeriveKeyPair` function, which replaces `GenerateKeyPair`. This function \"knows\" how to reliably generate a private key, so MLS doesn't have to.\r\n\r\nIt works in the obvious way for the CFRG curves, and does rejection sampling for the NIST curves. The bitmask part is necessary because P-521 scalars are only 521 bits long. There's only 1 bit that can be legally set in the MSB. Without clearing the top 7 bits, the candidate key would be rejected with probability 254/256. This bitmask does not impact uniformity.\r\n\r\nFinally, rejection sampling 255 times has overwhelming probability of success. Of the curves above, the one with highest probability of candidate scalar rejection is P-256, with probability 2^(-32). The likelihood that this fails after 255 attempts is 2^(-8160).",
+          "createdAt": "2020-05-19T19:27:38Z",
+          "updatedAt": "2020-05-19T19:37:16Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@rozbb, can you please resolve the conflict?",
+          "createdAt": "2020-05-19T22:21:00Z",
+          "updatedAt": "2020-05-19T22:21:00Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@bifurcation, please have a look!",
+          "createdAt": "2020-05-19T23:11:05Z",
+          "updatedAt": "2020-05-19T23:11:05Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE0ODc0NTU0",
+          "commit": {
+            "abbreviatedOid": "15c027f"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "This seems like a reasonable change to me. Thanks!",
+          "createdAt": "2020-05-19T22:44:18Z",
+          "updatedAt": "2020-05-19T22:54:10Z",
+          "comments": [
+            {
+              "originalPosition": 135,
+              "body": "```suggestion\r\ndef DeriveKeyPair(ikm):\r\n  prk = LabeledExtract(zero(0), \"keypair\", ikm)\r\n  sk = \"invalid\"\r\n  counter = 1\r\n  while sk == \"invalid\":\r\n    label = concat(\"candidate \", encode_big_endian(counter, 1))\r\n    bytes = Expand(prk, label, Nsk)\r\n    bytes[Nsk-1] = bytes[Nsk-1] & bitmask\r\n    sk = Octet-String-to-Field-Element(bytes)\r\n    counter += 1\r\n  return (sk, pk(sk))\r\n```",
+              "createdAt": "2020-05-19T22:44:18Z",
+              "updatedAt": "2020-05-19T23:07:09Z"
+            },
+            {
+              "originalPosition": 138,
+              "body": "```suggestion\r\nwhere bitmask is defined to be 0xFF for P-256 and P-384, and 0x01 for P-521, and\r\n`Octet-String-to-Field-Element` is as defined in {{SECG}}, Section 2.3.6.\r\n```",
+              "createdAt": "2020-05-19T22:45:37Z",
+              "updatedAt": "2020-05-19T23:07:09Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 80,
@@ -6726,6 +6807,95 @@
           "body": "",
           "createdAt": "2020-05-19T14:59:40Z",
           "updatedAt": "2020-05-19T14:59:40Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 81,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDIwMjA2MzUz",
+      "title": "Replace `zero(Nh)` with `zero(0)` in ExtractAndExpand",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/81",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #76 and #77.\r\n\r\nFor future reference, here's the test vector formatting script: https://gist.github.com/chris-wood/26b2ad73ef934cf74f2709cd29555ce1\r\n\r\ncc @rozbb",
+      "createdAt": "2020-05-19T15:47:23Z",
+      "updatedAt": "2020-05-20T14:28:47Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "325c94f111732d8fdab54caac26ceee364de8a69",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/zero-salt-extract-and-expand",
+      "headRefOid": "04c58d2d746566f6912d364a087608381765832c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE1Mzk1MzUx",
+          "commit": {
+            "abbreviatedOid": "04c58d2"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2020-05-20T14:28:16Z",
+          "updatedAt": "2020-05-20T14:28:47Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "\"empty **byte** string\"",
+              "createdAt": "2020-05-20T14:28:16Z",
+              "updatedAt": "2020-05-20T14:28:47Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 82,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDIwMjEyODk5",
+      "title": "Simplify the KeySchedule signature by removing pkSm.",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/82",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This is not used in the context construction. It only signals that `mode`\r\nis one of the authenticated flavors. Removing it allows us to simplify\r\nthe VerifyMode function, too, as it only exists to ensure PSK parameters\r\nare consistent.\r\n\r\nCloses #71.",
+      "createdAt": "2020-05-19T15:58:33Z",
+      "updatedAt": "2020-05-20T14:29:13Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "325c94f111732d8fdab54caac26ceee364de8a69",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/simplify-keyschedule-signature",
+      "headRefOid": "ea32940586c45a3227b83ca18663975b64a6df63",
+      "closedAt": "2020-05-20T14:29:13Z",
+      "mergedAt": "2020-05-20T14:29:12Z",
+      "mergedBy": "bifurcation",
+      "mergeCommit": {
+        "oid": "8af08a0ab00af8a55024263afc99749bed1e7c44"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE1Mzk2MTg5",
+          "commit": {
+            "abbreviatedOid": "ea32940"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2020-05-20T14:29:06Z",
+          "updatedAt": "2020-05-20T14:29:06Z",
           "comments": []
         }
       ]
