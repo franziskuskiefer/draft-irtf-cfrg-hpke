@@ -80,20 +80,20 @@ Table of Contents
                Key . . . . . . . . . . . . . . . . . . . . . . . . .  14
      5.2.  Encryption and Decryption . . . . . . . . . . . . . . . .  15
      5.3.  Secret Export . . . . . . . . . . . . . . . . . . . . . .  16
-   6.  Single-Shot APIs  . . . . . . . . . . . . . . . . . . . . . .  16
+   6.  Single-Shot APIs  . . . . . . . . . . . . . . . . . . . . . .  17
    7.  Algorithm Identifiers . . . . . . . . . . . . . . . . . . . .  17
-     7.1.  Key Encapsulation Mechanisms (KEMs) . . . . . . . . . . .  18
+     7.1.  Key Encapsulation Mechanisms (KEMs) . . . . . . . . . . .  17
        7.1.1.  Marshal . . . . . . . . . . . . . . . . . . . . . . .  18
        7.1.2.  Validation of Inputs and Outputs  . . . . . . . . . .  18
-     7.2.  Key Derivation Functions (KDFs) . . . . . . . . . . . . .  19
+     7.2.  Key Derivation Functions (KDFs) . . . . . . . . . . . . .  18
      7.3.  Authenticated Encryption with Associated Data (AEAD)
            Functions . . . . . . . . . . . . . . . . . . . . . . . .  19
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  20
-     8.1.  Security Properties . . . . . . . . . . . . . . . . . . .  20
-     8.2.  Security Requirements on a KEM used within HPKE . . . . .  22
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  19
+     8.1.  Security Properties . . . . . . . . . . . . . . . . . . .  19
+     8.2.  Security Requirements on a KEM used within HPKE . . . . .  21
      8.3.  Security Requirements on a KDF  . . . . . . . . . . . . .  22
      8.4.  Pre-Shared Key Recommendations  . . . . . . . . . . . . .  22
-     8.5.  Domain Separation . . . . . . . . . . . . . . . . . . . .  23
+     8.5.  Domain Separation . . . . . . . . . . . . . . . . . . . .  22
      8.6.  External Requirements / Non-Goals . . . . . . . . . . . .  23
      8.7.  Metadata Protection . . . . . . . . . . . . . . . . . . .  24
      8.8.  Designated-Verifier Signature . . . . . . . . . . . . . .  24
@@ -102,8 +102,8 @@ Table of Contents
      10.1.  KEM Identifiers  . . . . . . . . . . . . . . . . . . . .  25
      10.2.  KDF Identifiers  . . . . . . . . . . . . . . . . . . . .  26
      10.3.  AEAD Identifiers . . . . . . . . . . . . . . . . . . . .  26
-   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  27
-     11.1.  Normative References . . . . . . . . . . . . . . . . . .  27
+   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  26
+     11.1.  Normative References . . . . . . . . . . . . . . . . . .  26
      11.2.  Informative References . . . . . . . . . . . . . . . . .  27
    Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  30
 
@@ -849,24 +849,26 @@ Internet-Draft                    HPKE                          May 2020
    It is up to the application to ensure that encryptions and
    decryptions are done in the proper sequence, so that encryption and
    decryption nonces align.  If a Seal or Open operation would cause the
-   "seq" field to wrap, then the implementation MUST return an error.
+   "seq" field to overflow, then the implementation MUST return an
+   error.  Note that the internal Seal and Open calls inside
+   corresponding to the context's AEAD algorithm.
 
-   def Context.Nonce(seq):
+   def Context.ComputeNonce(seq):
      encSeq = encode_big_endian(seq, Nn)
      return xor(self.nonce, encSeq)
 
    def Context.IncrementSeq():
-     if self.seq >= (1 << Nn) - 1:
+     if self.seq >= (1 << (8*Nn)) - 1:
        return NonceOverflowError
      self.seq += 1
 
    def Context.Seal(aad, pt):
-     ct = Seal(self.key, self.Nonce(self.seq), aad, pt)
+     ct = Seal(self.key, self.ComputeNonce(self.seq), aad, pt)
      self.IncrementSeq()
      return ct
 
    def Context.Open(aad, ct):
-     pt = Open(self.key, self.Nonce(self.seq), aad, ct)
+     pt = Open(self.key, self.ComputeNonce(self.seq), aad, ct)
      if pt == OpenError:
        return OpenError
      self.IncrementSeq()
@@ -884,12 +886,10 @@ Internet-Draft                    HPKE                          May 2020
    def Context.Export(exporter_context, L):
      return LabeledExpand(self.exporter_secret, "sec", exporter_context, L)
 
-6.  Single-Shot APIs
 
-   In many cases, applications encrypt only a single message to a
-   recipient's public key.  This section provides templates for HPKE
-   APIs that implement stateless "single-shot" encryption and decryption
-   using APIs specified in Section 5.1.1 and Section 5.2:
+
+
+
 
 
 
@@ -897,6 +897,13 @@ Barnes, et al.          Expires 25 November 2020               [Page 16]
 
 Internet-Draft                    HPKE                          May 2020
 
+
+6.  Single-Shot APIs
+
+   In many cases, applications encrypt only a single message to a
+   recipient's public key.  This section provides templates for HPKE
+   APIs that implement stateless "single-shot" encryption and decryption
+   using APIs specified in Section 5.1.1 and Section 5.2:
 
    def Seal<MODE>(pkR, info, aad, pt, ...):
      enc, ctx = Setup<MODE>I(pkR, info, ...)
@@ -923,37 +930,6 @@ Internet-Draft                    HPKE                          May 2020
 
 7.  Algorithm Identifiers
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Barnes, et al.          Expires 25 November 2020               [Page 17]
-
-Internet-Draft                    HPKE                          May 2020
-
-
 7.1.  Key Encapsulation Mechanisms (KEMs)
 
        +--------+---------------+-----+------+-----+---------------+
@@ -970,6 +946,14 @@ Internet-Draft                    HPKE                          May 2020
        | 0x0012 | DHKEM(P-521,  | 64  | 133  | 133 | [NISTCurves], |
        |        | HKDF-SHA512)  |     |      |     | [RFC5869]     |
        +--------+---------------+-----+------+-----+---------------+
+
+
+
+Barnes, et al.          Expires 25 November 2020               [Page 17]
+
+Internet-Draft                    HPKE                          May 2020
+
+
        | 0x0020 | DHKEM(X25519, | 32  | 32   | 32  | [RFC7748],    |
        |        | HKDF-SHA256)  |     |      |     | [RFC5869]     |
        +--------+---------------+-----+------+-----+---------------+
@@ -997,19 +981,6 @@ Internet-Draft                    HPKE                          May 2020
    ephemeral public key "pkE"; in authenticated modes, the recipient
    MUST validate the sender's static public key "pkS".
 
-
-
-
-
-
-
-
-
-Barnes, et al.          Expires 25 November 2020               [Page 18]
-
-Internet-Draft                    HPKE                          May 2020
-
-
    For the groups based on NIST curves P-256, P-384 and P-521, senders
    and recipients MUST perform full public-key validation on all public
    key inputs as defined in [keyagreement], which includes validating
@@ -1031,6 +1002,14 @@ Internet-Draft                    HPKE                          May 2020
                 | 0x0000 | (reserved)  | N/A | N/A       |
                 +--------+-------------+-----+-----------+
                 | 0x0001 | HKDF-SHA256 | 32  | [RFC5869] |
+
+
+
+Barnes, et al.          Expires 25 November 2020               [Page 18]
+
+Internet-Draft                    HPKE                          May 2020
+
+
                 +--------+-------------+-----+-----------+
                 | 0x0002 | HKDF-SHA384 | 48  | [RFC5869] |
                 +--------+-------------+-----+-----------+
@@ -1054,17 +1033,6 @@ Internet-Draft                    HPKE                          May 2020
            +--------+------------------+-----+-----+-----------+
 
                                   Table 4
-
-
-
-
-
-
-
-Barnes, et al.          Expires 25 November 2020               [Page 19]
-
-Internet-Draft                    HPKE                          May 2020
-
 
 8.  Security Considerations
 
@@ -1090,6 +1058,14 @@ Internet-Draft                    HPKE                          May 2020
    between the scheme proposed there and the scheme in this document
    (both named HPKE) is that we interpose some KDF calls between the KEM
    and the AEAD.  So further analysis is needed on two fronts, first to
+
+
+
+Barnes, et al.          Expires 25 November 2020               [Page 19]
+
+Internet-Draft                    HPKE                          May 2020
+
+
    verify that the additional KDF calls do not cause the IND-CCA2
    property to fail, and second to verify the two additional properties
    noted above.
@@ -1114,14 +1090,6 @@ Internet-Draft                    HPKE                          May 2020
    The analysis in [HPKEAnalysis] demonstrates that under these
    constraints, HPKE continues to provide IND-CCA2 security, and
    provides the additional properties noted above.  The analysis
-
-
-
-Barnes, et al.          Expires 25 November 2020               [Page 20]
-
-Internet-Draft                    HPKE                          May 2020
-
-
    considers two variants of HPKE usage: single-shot message encryption
    and secret key export.  In the single-shot variant, S uses the
    single-shot API to use the key once to encrypt a plaintext.  The
@@ -1133,6 +1101,26 @@ Internet-Draft                    HPKE                          May 2020
    The table below summarizes the main results from [HPKEAnalysis].  N/A
    means that a property does not apply for the given mode, whereas X
    means the given mode satisfies the property.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Barnes, et al.          Expires 25 November 2020               [Page 20]
+
+Internet-Draft                    HPKE                          May 2020
+
 
    +----------------------+--------------+-------------+--------------+
    | Variant              | Message Sec. | Export Sec. | Sender Auth. |
@@ -1167,17 +1155,6 @@ Internet-Draft                    HPKE                          May 2020
    security would need to take this difference into account, in addition
    to simply using a post-quantum KEM.
 
-
-
-
-
-
-
-Barnes, et al.          Expires 25 November 2020               [Page 21]
-
-Internet-Draft                    HPKE                          May 2020
-
-
 8.2.  Security Requirements on a KEM used within HPKE
 
    A KEM used within HPKE MUST ensure the following to avoid identity
@@ -1189,6 +1166,17 @@ Internet-Draft                    HPKE                          May 2020
    usually implemented by including these values explicitly into the
    context of the key derivation function used to compute the KEM shared
    secret.  This is also how DHKEM meets the requirement.
+
+
+
+
+
+
+
+Barnes, et al.          Expires 25 November 2020               [Page 21]
+
+Internet-Draft                    HPKE                          May 2020
+
 
 8.3.  Security Requirements on a KDF
 
@@ -1226,14 +1214,6 @@ Internet-Draft                    HPKE                          May 2020
    keys of one participant.  In the PSK mode this is trivially the case
    if the adversary acts as sender.
 
-
-
-
-Barnes, et al.          Expires 25 November 2020               [Page 22]
-
-Internet-Draft                    HPKE                          May 2020
-
-
 8.5.  Domain Separation
 
    HPKE allows combining a DHKEM variant DHKEM(Group, KDF') and a KDF
@@ -1245,6 +1225,14 @@ Internet-Draft                    HPKE                          May 2020
    the input domains of all Extract and Expand invocations.  It also
    justifies modeling them as independent functions even if instantiated
    by the same KDF.
+
+
+
+
+Barnes, et al.          Expires 25 November 2020               [Page 22]
+
+Internet-Draft                    HPKE                          May 2020
+
 
    Future KEM instantiations MUST ensure that all internal invocations
    of Extract and Expand can be modeled as functions independent from
@@ -1281,6 +1269,18 @@ Internet-Draft                    HPKE                          May 2020
       stream of ciphertexts resulting from a given Context.  HPKE
       provides no other replay protection.
 
+   *  Forward secrecy - HPKE ciphertexts are not forward-secure.  In
+      mode_base and mode_auth, a given ciphertext can be decrypted if
+      the recipient's public encryption key is compromised.  In mode_psk
+      and mode_auth_psk, a given ciphertext can be decrypted if the
+      recipient's public encryption key and the PSK are compromised.
+
+
+
+
+
+
+
 
 
 
@@ -1289,12 +1289,6 @@ Barnes, et al.          Expires 25 November 2020               [Page 23]
 
 Internet-Draft                    HPKE                          May 2020
 
-
-   *  Forward secrecy - HPKE ciphertexts are not forward-secure.  In
-      mode_base and mode_auth, a given ciphertext can be decrypted if
-      the recipient's public encryption key is compromised.  In mode_psk
-      and mode_auth_psk, a given ciphertext can be decrypted if the
-      recipient's public encryption key and the PSK are compromised.
 
 8.7.  Metadata Protection
 
@@ -1337,15 +1331,6 @@ Internet-Draft                    HPKE                          May 2020
    would produce a 48-byte signature comprising a 32-byte ephemeral
    X25519 key and a 16-byte GCM tag.
 
-
-
-
-
-Barnes, et al.          Expires 25 November 2020               [Page 24]
-
-Internet-Draft                    HPKE                          May 2020
-
-
    To verify such a signature, the recipient performs the corresponding
    HPKE setup and calls Open with the provided ciphertext.  If the AEAD
    authentication passes, then the signature is valid.
@@ -1353,6 +1338,13 @@ Internet-Draft                    HPKE                          May 2020
    This scheme re-uses the authentication scheme underlying the AEAD
    algorithm in use, while using the KEM to establish a one-time
    authentication key from a pair of KEM public keys.
+
+
+
+Barnes, et al.          Expires 25 November 2020               [Page 24]
+
+Internet-Draft                    HPKE                          May 2020
+
 
 9.  Message Encoding
 
@@ -1393,15 +1385,6 @@ Internet-Draft                    HPKE                          May 2020
    *  Nzz: The length in bytes of a KEM shared secret produced by the
       algorithm
 
-
-
-
-
-Barnes, et al.          Expires 25 November 2020               [Page 25]
-
-Internet-Draft                    HPKE                          May 2020
-
-
    *  Nenc: The length in bytes of an encapsulated key produced by the
       algorithm
 
@@ -1411,6 +1394,13 @@ Internet-Draft                    HPKE                          May 2020
    *  Reference: Where this algorithm is defined
 
    Initial contents: Provided in Section 7.1
+
+
+
+Barnes, et al.          Expires 25 November 2020               [Page 25]
+
+Internet-Draft                    HPKE                          May 2020
+
 
 10.2.  KDF Identifiers
 
@@ -1451,13 +1441,6 @@ Internet-Draft                    HPKE                          May 2020
 
    Initial contents: Provided in Section 7.3
 
-
-
-Barnes, et al.          Expires 25 November 2020               [Page 26]
-
-Internet-Draft                    HPKE                          May 2020
-
-
 11.  References
 
 11.1.  Normative References
@@ -1466,6 +1449,14 @@ Internet-Draft                    HPKE                          May 2020
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
+
+
+
+
+Barnes, et al.          Expires 25 November 2020               [Page 26]
+
+Internet-Draft                    HPKE                          May 2020
+
 
    [RFC5116]  McGrew, D., "An Interface and Algorithms for Authenticated
               Encryption", RFC 5116, DOI 10.17487/RFC5116, January 2008,
@@ -1507,17 +1498,21 @@ Internet-Draft                    HPKE                          May 2020
               <https://link.springer.com/content/
               pdf/10.1007/3-540-44586-2_8.pdf>.
 
+   [GCM]      Dworkin, M., "Recommendation for block cipher modes of
+              operation :", DOI 10.6028/nist.sp.800-38d, National
+              Institute of Standards and Technology report, 2007,
+              <https://doi.org/10.6028/nist.sp.800-38d>.
+
+
+
+
+
 
 
 Barnes, et al.          Expires 25 November 2020               [Page 27]
 
 Internet-Draft                    HPKE                          May 2020
 
-
-   [GCM]      Dworkin, M., "Recommendation for block cipher modes of
-              operation :", DOI 10.6028/nist.sp.800-38d, National
-              Institute of Standards and Technology report, 2007,
-              <https://doi.org/10.6028/nist.sp.800-38d>.
 
    [HMAC]     Dodis, Y., Ristenpart, T., Steinberger, J., and S.
               Tessaro, "To Hash or Not to Hash Again?
@@ -1556,8 +1551,13 @@ Internet-Draft                    HPKE                          May 2020
               Verifier Proofs and Their Applications", 1996,
               <https://doi.org/10.1007%2F3-540-49677-7_30>.
 
-
-
+   [keyagreement]
+              Barker, E., Chen, L., Roginsky, A., Vassilev, A., and R.
+              Davis, "Recommendation for pair-wise key-establishment
+              schemes using discrete logarithm cryptography",
+              DOI 10.6028/nist.sp.800-56ar3, National Institute of
+              Standards and Technology report, April 2018,
+              <https://doi.org/10.6028/nist.sp.800-56ar3>.
 
 
 
@@ -1569,14 +1569,6 @@ Barnes, et al.          Expires 25 November 2020               [Page 28]
 
 Internet-Draft                    HPKE                          May 2020
 
-
-   [keyagreement]
-              Barker, E., Chen, L., Roginsky, A., Vassilev, A., and R.
-              Davis, "Recommendation for pair-wise key-establishment
-              schemes using discrete logarithm cryptography",
-              DOI 10.6028/nist.sp.800-56ar3, National Institute of
-              Standards and Technology report, April 2018,
-              <https://doi.org/10.6028/nist.sp.800-56ar3>.
 
    [MAEA10]   Gayoso Martinez, V., Hernandez Alvarez, F., Hernandez
               Encinas, L., and C. Sanchez Avila, "A Comparison of the
@@ -1619,16 +1611,20 @@ Internet-Draft                    HPKE                          May 2020
               encryption (version 2.1)", 2001,
               <https://eprint.iacr.org/2001/112>.
 
+   [SECG]     "Elliptic Curve Cryptography, Standards for Efficient
+              Cryptography Group, ver. 2", 2009,
+              <https://secg.org/sec1-v2.pdf>.
+
+
+
+
+
 
 
 Barnes, et al.          Expires 25 November 2020               [Page 29]
 
 Internet-Draft                    HPKE                          May 2020
 
-
-   [SECG]     "Elliptic Curve Cryptography, Standards for Efficient
-              Cryptography Group, ver. 2", 2009,
-              <https://secg.org/sec1-v2.pdf>.
 
    [TestVectors]
               "HPKE Test Vectors", 2020, <https://github.com/cfrg/draft-
@@ -1667,6 +1663,10 @@ A.1.1.  Base Setup Information
    cc330538b6d2cf65e9ecacc11947342eeeceadd8d500e4efe6f7f8ad2ef119af
 
 A.1.1.1.  Encryptions
+
+
+
+
 
 
 
