@@ -1516,7 +1516,9 @@ and the recipient<a href="#section-5-5.1" class="pilcrow">¶</a>
 </ol>
 <p id="section-5-6">A "context" encodes the AEAD algorithm and key in use, and manages
 the nonces used so that the same nonce is not used with multiple
-plaintexts.<a href="#section-5-6" class="pilcrow">¶</a></p>
+plaintexts. It also has an interface for exporting secret values,
+as described in <a href="#hpke-export" class="xref">Section 5.3</a>. See <a href="#hpke-dem" class="xref">Section 5.2</a> for a description
+of this structure and its interfaces.<a href="#section-5-6" class="pilcrow">¶</a></p>
 <p id="section-5-7">The constructions described here presume that the relevant non-private
 parameters (<code>enc</code>, <code>pskID</code>, etc.) are transported between the sender and the
 recipient by some application making use of HPKE. Moreover, a recipient with more
@@ -1598,22 +1600,23 @@ def KeySchedule(mode, zz, info, psk, pskID):
                        encode_big_endian(aead_id, 2))
   pskID_hash = LabeledExtract(zero(0), "pskID_hash", pskID)
   info_hash = LabeledExtract(zero(0), "info_hash", info)
-  context = concat(ciphersuite, mode, pskID_hash, info_hash)
+  schedule_context = concat(ciphersuite, mode, pskID_hash, info_hash)
 
   psk_hash = LabeledExtract(zero(0), "psk_hash", psk)
 
   secret = LabeledExtract(psk_hash, "secret", zz)
-  key = LabeledExpand(secret, "key", context, Nk)
-  nonce = LabeledExpand(secret, "nonce", context, Nn)
-  exporter_secret = LabeledExpand(secret, "exp", context, Nh)
+  key = LabeledExpand(secret, "key", schedule_context, Nk)
+  nonce = LabeledExpand(secret, "nonce", schedule_context, Nn)
+  exporter_secret = LabeledExpand(secret, "exp", schedule_context, Nh)
 
-  return Context(key, nonce, exporter_secret)
+  return Context(key, nonce, 0, exporter_secret)
 </pre><a href="#section-5.1-7" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1-8">Note that the context construction in the KeySchedule procedure is
-equivalent to serializing a structure of the following form in the
-TLS presentation syntax:<a href="#section-5.1-8" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-5.1-9">
+<p id="section-5.1-8">See <a href="#hpke-dem" class="xref">Section 5.2</a> for a description of the Context output.<a href="#section-5.1-8" class="pilcrow">¶</a></p>
+<p id="section-5.1-9">Note that the <code>schedule_context</code> construction in the KeySchedule procedure is
+equivalent to serializing a structure of the following form in the TLS presentation
+syntax:<a href="#section-5.1-9" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-5.1-10">
 <pre>
 struct {
     uint16 kem_id;
@@ -1622,8 +1625,8 @@ struct {
     uint8 mode;
     opaque pskID_hash[Nh];
     opaque info_hash[Nh];
-} HPKEContext;
-</pre><a href="#section-5.1-9" class="pilcrow">¶</a>
+} ScheduleContext;
+</pre><a href="#section-5.1-10" class="pilcrow">¶</a>
 </div>
 <div id="hpke-kem">
 <section id="section-5.1.1">
@@ -1775,6 +1778,8 @@ that stores the required state:<a href="#section-5.2-2" class="pilcrow">¶</a></
 </li>
 <li id="section-5.2-3.4">A sequence number (initially 0)<a href="#section-5.2-3.4" class="pilcrow">¶</a>
 </li>
+<li id="section-5.2-3.5">An exporter secret (see <a href="#hpke-export" class="xref">Section 5.3</a>)<a href="#section-5.2-3.5" class="pilcrow">¶</a>
+</li>
 </ul>
 <p id="section-5.2-4">All of these fields except the sequence number are constant.  The
 sequence number is used to provide nonce uniqueness: The nonce used
@@ -1786,8 +1791,8 @@ the left with zero), but MUST return an error if the sequence number
 overflows.<a href="#section-5.2-4" class="pilcrow">¶</a></p>
 <p id="section-5.2-5">Encryption is unidirectional from sender to recipient. Each encryption
 or decryption operation increments the sequence number for the context
-in use.  The sender's context MUST be used for encryption only. Similarly,
-the recipient's context MUST be used for decryption only. Higher-level
+in use.  The sender's context MUST NOT be used for decryption. Similarly,
+the recipient's context MUST NOT be used for encryption. Higher-level
 protocols re-using the HPKE key exchange for more general purposes can
 derive separate keying material as needed using use the Export interface;
 see <a href="#hpke-export" class="xref">Section 5.3</a> for more details.<a href="#section-5.2-5" class="pilcrow">¶</a></p>
