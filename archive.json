@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-05-24T00:24:45.954879+00:00",
+  "timestamp": "2020-05-25T17:57:57.908757+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -821,13 +821,22 @@
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [
+        "bug",
         "editorial"
       ],
       "body": "Section 5.3 explains secrets are exported with the KDF Expand function but the included code in the same section now calls LabeledExpand with a \"sec\" label.\r\n\r\nThe JSON test vectors contain sample results for the export function, but they match an unlabeled implementation with Expand and not LabeledExpand.",
       "createdAt": "2020-05-20T06:09:46Z",
-      "updatedAt": "2020-05-20T15:23:44Z",
+      "updatedAt": "2020-05-24T00:30:03Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Good catch! We missed updating the `Export` code and test vectors. ",
+          "createdAt": "2020-05-24T00:30:03Z",
+          "updatedAt": "2020-05-24T00:30:03Z"
+        }
+      ]
     },
     {
       "number": 84,
@@ -7263,6 +7272,113 @@
       },
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 101,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDIyMzQ0NzUw",
+      "title": "Address most of the nits from Verisign's review.",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/101",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #100, #97, #95, #93, #92, #91, #90, #89, #88, #87, #86, and #55. \r\n\r\nEdit: Updated to include #94 and #72.\r\n\r\nI'll update the test vectors (and their labels) in a separate change that aligns with a change in the cisco/go-hpke codebase. \r\n\r\ncc @blipp, @rozbb, @davidben for visibility",
+      "createdAt": "2020-05-24T00:26:58Z",
+      "updatedAt": "2020-05-25T17:57:31Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "9a2c364839fa08c8eb8b3f714f5459c249f828ce",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/verisign-nits",
+      "headRefOid": "ad064a7bd9edf0b9c71729ac6209e690483ab62f",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE3MzIwNjk2",
+          "commit": {
+            "abbreviatedOid": "055226d"
+          },
+          "author": "rozbb",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-05-24T01:42:59Z",
+          "updatedAt": "2020-05-24T01:47:55Z",
+          "comments": [
+            {
+              "originalPosition": 197,
+              "body": "Isn't HPKE supposed to be more general than this? SIKE should be included as a possible KEM, for example.",
+              "createdAt": "2020-05-24T01:42:59Z",
+              "updatedAt": "2020-05-25T17:57:31Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE3MzIwODY5",
+          "commit": {
+            "abbreviatedOid": "055226d"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-05-24T01:49:15Z",
+          "updatedAt": "2020-05-24T01:49:15Z",
+          "comments": [
+            {
+              "originalPosition": 197,
+              "body": "It is, but this sentence pertains to what\u2019s currently specified (with a code point) in the document. ",
+              "createdAt": "2020-05-24T01:49:15Z",
+              "updatedAt": "2020-05-25T17:57:31Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE3Nzk0OTg4",
+          "commit": {
+            "abbreviatedOid": "055226d"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-05-25T16:05:19Z",
+          "updatedAt": "2020-05-25T16:05:20Z",
+          "comments": [
+            {
+              "originalPosition": 404,
+              "body": "```Note that the internal Seal and Open calls inside corresponding to the context's AEAD algorithm.```\r\ncorresponding -> correspond ?",
+              "createdAt": "2020-05-25T16:05:20Z",
+              "updatedAt": "2020-05-25T17:57:31Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE3ODI5NzA3",
+          "commit": {
+            "abbreviatedOid": "055226d"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-05-25T17:57:25Z",
+          "updatedAt": "2020-05-25T17:57:25Z",
+          "comments": [
+            {
+              "originalPosition": 403,
+              "body": "```suggestion\r\nthe internal Seal and Open calls inside correspond to the context's AEAD\r\n```",
+              "createdAt": "2020-05-25T17:57:25Z",
+              "updatedAt": "2020-05-25T17:57:31Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
