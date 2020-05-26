@@ -840,7 +840,7 @@ table.left {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Barnes, et al.</td>
-<td class="center">Expires 26 November 2020</td>
+<td class="center">Expires 27 November 2020</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -853,12 +853,12 @@ table.left {
 <dd class="internet-draft">draft-irtf-cfrg-hpke-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2020-05-25" class="published">25 May 2020</time>
+<time datetime="2020-05-26" class="published">26 May 2020</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2020-11-26">26 November 2020</time></dd>
+<dd class="expires"><time datetime="2020-11-27">27 November 2020</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -907,7 +907,7 @@ primitives based on elliptic curve Diffie-Hellman key agreement.<a href="#sectio
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 26 November 2020.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 27 November 2020.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1600,20 +1600,20 @@ def KeySchedule(mode, zz, info, psk, pskID):
                        encode_big_endian(aead_id, 2))
   pskID_hash = LabeledExtract(zero(0), "pskID_hash", pskID)
   info_hash = LabeledExtract(zero(0), "info_hash", info)
-  schedule_context = concat(ciphersuite, mode, pskID_hash, info_hash)
+  key_schedule_context = concat(ciphersuite, mode, pskID_hash, info_hash)
 
   psk_hash = LabeledExtract(zero(0), "psk_hash", psk)
 
   secret = LabeledExtract(psk_hash, "secret", zz)
-  key = LabeledExpand(secret, "key", schedule_context, Nk)
-  nonce = LabeledExpand(secret, "nonce", schedule_context, Nn)
-  exporter_secret = LabeledExpand(secret, "exp", schedule_context, Nh)
+  key = LabeledExpand(secret, "key", key_schedule_context, Nk)
+  nonce = LabeledExpand(secret, "nonce", key_schedule_context, Nn)
+  exporter_secret = LabeledExpand(secret, "exp", key_schedule_context, Nh)
 
   return Context(key, nonce, 0, exporter_secret)
 </pre><a href="#section-5.1-7" class="pilcrow">¶</a>
 </div>
 <p id="section-5.1-8">See <a href="#hpke-dem" class="xref">Section 5.2</a> for a description of the Context output.<a href="#section-5.1-8" class="pilcrow">¶</a></p>
-<p id="section-5.1-9">Note that the <code>schedule_context</code> construction in the KeySchedule procedure is
+<p id="section-5.1-9">Note that the <code>key_schedule_context</code> construction in the KeySchedule procedure is
 equivalent to serializing a structure of the following form in the TLS presentation
 syntax:<a href="#section-5.1-9" class="pilcrow">¶</a></p>
 <div class="artwork art-text alignLeft" id="section-5.1-10">
@@ -1625,7 +1625,7 @@ struct {
     uint8 mode;
     opaque pskID_hash[Nh];
     opaque info_hash[Nh];
-} ScheduleContext;
+} KeyScheduleContext;
 </pre><a href="#section-5.1-10" class="pilcrow">¶</a>
 </div>
 <div id="hpke-kem">
