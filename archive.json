@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-05-25T17:57:57.908757+00:00",
+  "timestamp": "2020-05-26T21:50:05.065841+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -7285,13 +7285,13 @@
       "labels": [],
       "body": "Closes #100, #97, #95, #93, #92, #91, #90, #89, #88, #87, #86, and #55. \r\n\r\nEdit: Updated to include #94 and #72.\r\n\r\nI'll update the test vectors (and their labels) in a separate change that aligns with a change in the cisco/go-hpke codebase. \r\n\r\ncc @blipp, @rozbb, @davidben for visibility",
       "createdAt": "2020-05-24T00:26:58Z",
-      "updatedAt": "2020-05-25T17:57:31Z",
+      "updatedAt": "2020-05-26T21:49:17Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
       "baseRefName": "master",
       "baseRefOid": "9a2c364839fa08c8eb8b3f714f5459c249f828ce",
       "headRepository": "cfrg/draft-irtf-cfrg-hpke",
       "headRefName": "caw/verisign-nits",
-      "headRefOid": "ad064a7bd9edf0b9c71729ac6209e690483ab62f",
+      "headRefOid": "ccef0505bba91e5ba996c6e73b6e48dce3e6c327",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -7314,7 +7314,7 @@
               "originalPosition": 197,
               "body": "Isn't HPKE supposed to be more general than this? SIKE should be included as a possible KEM, for example.",
               "createdAt": "2020-05-24T01:42:59Z",
-              "updatedAt": "2020-05-25T17:57:31Z"
+              "updatedAt": "2020-05-26T21:49:17Z"
             }
           ]
         },
@@ -7334,7 +7334,7 @@
               "originalPosition": 197,
               "body": "It is, but this sentence pertains to what\u2019s currently specified (with a code point) in the document. ",
               "createdAt": "2020-05-24T01:49:15Z",
-              "updatedAt": "2020-05-25T17:57:31Z"
+              "updatedAt": "2020-05-26T21:49:17Z"
             }
           ]
         },
@@ -7354,7 +7354,7 @@
               "originalPosition": 404,
               "body": "```Note that the internal Seal and Open calls inside corresponding to the context's AEAD algorithm.```\r\ncorresponding -> correspond ?",
               "createdAt": "2020-05-25T16:05:20Z",
-              "updatedAt": "2020-05-25T17:57:31Z"
+              "updatedAt": "2020-05-26T21:49:17Z"
             }
           ]
         },
@@ -7374,7 +7374,7 @@
               "originalPosition": 403,
               "body": "```suggestion\r\nthe internal Seal and Open calls inside correspond to the context's AEAD\r\n```",
               "createdAt": "2020-05-25T17:57:25Z",
-              "updatedAt": "2020-05-25T17:57:31Z"
+              "updatedAt": "2020-05-26T21:49:17Z"
             }
           ]
         }
