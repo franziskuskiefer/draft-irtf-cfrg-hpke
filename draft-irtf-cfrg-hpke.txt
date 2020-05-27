@@ -510,8 +510,9 @@ Internet-Draft                    HPKE                          May 2020
    include two authenticated variants, one of which authenticates
    possession of a pre-shared key, and one of which authenticates
    possession of a KEM private key.  Both authenticated variants
-   contribute additional keying material to encryption operation.  The
-   following one-byte values will be used to distinguish between modes:
+   contribute additional keying material to the encryption operation.
+   The following one-byte values will be used to distinguish between
+   modes:
 
                          +---------------+-------+
                          | Mode          | Value |
@@ -552,7 +553,6 @@ Internet-Draft                    HPKE                          May 2020
 
    The procedures described in this session are laid out in a Python-
    like pseudocode.  The algorithms in use are left implicit.
-
 
 
 
