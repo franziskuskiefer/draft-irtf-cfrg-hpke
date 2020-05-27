@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-05-26T21:50:05.065841+00:00",
+  "timestamp": "2020-05-27T21:04:49.847806+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -7285,18 +7285,54 @@
       "labels": [],
       "body": "Closes #100, #97, #95, #93, #92, #91, #90, #89, #88, #87, #86, and #55. \r\n\r\nEdit: Updated to include #94 and #72.\r\n\r\nI'll update the test vectors (and their labels) in a separate change that aligns with a change in the cisco/go-hpke codebase. \r\n\r\ncc @blipp, @rozbb, @davidben for visibility",
       "createdAt": "2020-05-24T00:26:58Z",
-      "updatedAt": "2020-05-26T21:49:17Z",
+      "updatedAt": "2020-05-27T21:04:44Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
       "baseRefName": "master",
       "baseRefOid": "9a2c364839fa08c8eb8b3f714f5459c249f828ce",
       "headRepository": "cfrg/draft-irtf-cfrg-hpke",
       "headRefName": "caw/verisign-nits",
-      "headRefOid": "ccef0505bba91e5ba996c6e73b6e48dce3e6c327",
+      "headRefOid": "79fff5f3b9dbc37c7e4f5ee47ca5f70607e1b686",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@rozbb, @kjacobs-moz, @raphaelrobert: could you please check these test vectors? ",
+          "createdAt": "2020-05-26T21:53:08Z",
+          "updatedAt": "2020-05-26T21:53:08Z"
+        },
+        {
+          "author": "rozbb",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Yup, passes for me.\r\n\r\nOne note: there a field in the JSON called `key_schedule_context`, and it's the only snakecase field",
+          "createdAt": "2020-05-26T22:25:32Z",
+          "updatedAt": "2020-05-26T22:26:18Z"
+        },
+        {
+          "author": "kjacobs-moz",
+          "authorAssociation": "NONE",
+          "body": "I've updated my implementation and the Curve25519 vectors pass, but not P-curves (using base mode values from the draft). These fail as early as the computation of `zz`. \r\n\r\nI'm not sure if @rozbb's implementation supports P-curves yet... I assume this is a bug in my code, but will need to pick debugging back up tomorrow. ",
+          "createdAt": "2020-05-27T01:38:52Z",
+          "updatedAt": "2020-05-27T01:38:52Z"
+        },
+        {
+          "author": "rozbb",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I can confirm that P-256 an X25519 both worked for me",
+          "createdAt": "2020-05-27T01:45:09Z",
+          "updatedAt": "2020-05-27T01:45:09Z"
+        },
+        {
+          "author": "kjacobs-moz",
+          "authorAssociation": "NONE",
+          "body": "> I can confirm that P-256 an X25519 both worked for me\r\n\r\nThe issue was on my end, due to using the old (pre- 0cbca7cb11f37d433493b9f17905f351084a821e) shared secret representation.\r\n\r\nThe vectors seem to be correct \ud83d\udc4d.\r\n\r\n",
+          "createdAt": "2020-05-27T04:23:24Z",
+          "updatedAt": "2020-05-27T04:23:24Z"
+        }
+      ],
       "reviews": [
         {
           "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE3MzIwNjk2",
@@ -7314,7 +7350,7 @@
               "originalPosition": 197,
               "body": "Isn't HPKE supposed to be more general than this? SIKE should be included as a possible KEM, for example.",
               "createdAt": "2020-05-24T01:42:59Z",
-              "updatedAt": "2020-05-26T21:49:17Z"
+              "updatedAt": "2020-05-27T21:04:24Z"
             }
           ]
         },
@@ -7334,7 +7370,7 @@
               "originalPosition": 197,
               "body": "It is, but this sentence pertains to what\u2019s currently specified (with a code point) in the document. ",
               "createdAt": "2020-05-24T01:49:15Z",
-              "updatedAt": "2020-05-26T21:49:17Z"
+              "updatedAt": "2020-05-27T21:04:24Z"
             }
           ]
         },
@@ -7354,7 +7390,7 @@
               "originalPosition": 404,
               "body": "```Note that the internal Seal and Open calls inside corresponding to the context's AEAD algorithm.```\r\ncorresponding -> correspond ?",
               "createdAt": "2020-05-25T16:05:20Z",
-              "updatedAt": "2020-05-26T21:49:17Z"
+              "updatedAt": "2020-05-27T21:04:24Z"
             }
           ]
         },
@@ -7374,7 +7410,183 @@
               "originalPosition": 403,
               "body": "```suggestion\r\nthe internal Seal and Open calls inside correspond to the context's AEAD\r\n```",
               "createdAt": "2020-05-25T17:57:25Z",
-              "updatedAt": "2020-05-26T21:49:17Z"
+              "updatedAt": "2020-05-27T21:04:24Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE5Mzk4NTgz",
+          "commit": {
+            "abbreviatedOid": "9000051"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-05-27T16:24:48Z",
+          "updatedAt": "2020-05-27T18:45:20Z",
+          "comments": [
+            {
+              "originalPosition": 199,
+              "body": "\"using ... based on ...\" seems redundant.  Reword to something like \"... primitives, such as ECDH, HKDF, and SHA2.\"  ",
+              "createdAt": "2020-05-27T16:24:48Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            },
+            {
+              "originalPosition": 233,
+              "body": "\"contained herein\" -> \"defined here\"",
+              "createdAt": "2020-05-27T16:26:49Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            },
+            {
+              "originalPosition": 233,
+              "body": "Also, why drop \"formally verified\"?  Since we did that.",
+              "createdAt": "2020-05-27T16:27:14Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            },
+            {
+              "originalPosition": 264,
+              "body": "I really don't care strongly about this, but it seems like in RFC 7748, `X*` is the group, and `Curve*` is the ECDH operation (largely just specifying the base point).  Since we're doing ECDH here, `Curve*` seems like the right answer.",
+              "createdAt": "2020-05-27T18:33:29Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            },
+            {
+              "originalPosition": 446,
+              "body": "This doesn't make sense.  The curve is a group. ",
+              "createdAt": "2020-05-27T18:42:17Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            },
+            {
+              "originalPosition": 466,
+              "body": "Same comment re group == curve.",
+              "createdAt": "2020-05-27T18:43:00Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            },
+            {
+              "originalPosition": 477,
+              "body": "Same comment, `X*` are the groups.",
+              "createdAt": "2020-05-27T18:44:53Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE5NTI5MzUx",
+          "commit": {
+            "abbreviatedOid": "9000051"
+          },
+          "author": "davidben",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-05-27T19:08:18Z",
+          "updatedAt": "2020-05-27T19:08:18Z",
+          "comments": [
+            {
+              "originalPosition": 264,
+              "body": "I think you've got it backwards, though both specify a base point. X* is a function from bytes to bytes, with group operations and serialization built in. curve* is a curve with base point.\r\n\r\nhttps://tools.ietf.org/html/rfc7748#section-4.1\r\n>   For the ~128-bit security level, the prime 2^255 - 19 is recommended\r\n>   for performance on a wide range of architectures.  Few primes of the\r\n>   form 2^c-s with s small exist between 2^250 and 2^521, and other\r\n>   choices of coefficient are not as competitive in performance.  This\r\n>   prime is congruent to 1 mod 4, and the derivation procedure in\r\n>   Appendix A results in the following Montgomery curve\r\n>   v^2 = u^3 + A*u^2 + u, called \"curve25519\":\r\n\r\nhttps://tools.ietf.org/html/rfc7748#section-5\r\n>   The \"X25519\" and \"X448\" functions perform scalar multiplication on\r\n>   the Montgomery form of the above curves.  (This is used when\r\n>   implementing Diffie-Hellman.)  The functions take a scalar and a\r\n>   u-coordinate as inputs and produce a u-coordinate as output.\r\n>   Although the functions work internally with integers, the inputs and\r\n>   outputs are 32-byte strings (for X25519) or 56-byte strings (for\r\n>   X448) and this specification defines their encoding.",
+              "createdAt": "2020-05-27T19:08:18Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE5NTMwNjI3",
+          "commit": {
+            "abbreviatedOid": "9000051"
+          },
+          "author": "davidben",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-05-27T19:09:45Z",
+          "updatedAt": "2020-05-27T19:09:46Z",
+          "comments": [
+            {
+              "originalPosition": 264,
+              "body": "Also https://mailarchive.ietf.org/arch/msg/cfrg/-9LEdnzVrE5RORux3Oo_oDDRksU/",
+              "createdAt": "2020-05-27T19:09:45Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE5NTMxMDU1",
+          "commit": {
+            "abbreviatedOid": "9000051"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-05-27T19:10:22Z",
+          "updatedAt": "2020-05-27T19:10:22Z",
+          "comments": [
+            {
+              "originalPosition": 264,
+              "body": "Yeah, I think using x25519 is also more clear since there are small subgroups of curve25519.",
+              "createdAt": "2020-05-27T19:10:22Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE5NjA2Mjk5",
+          "commit": {
+            "abbreviatedOid": "9000051"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-05-27T21:03:04Z",
+          "updatedAt": "2020-05-27T21:03:04Z",
+          "comments": [
+            {
+              "originalPosition": 233,
+              "body": "The \"formally verified\" bit was redundant with the remainder of the paragraph, which states that we did the analysis.",
+              "createdAt": "2020-05-27T21:03:04Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE5NjA2OTA5",
+          "commit": {
+            "abbreviatedOid": "9000051"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-05-27T21:03:59Z",
+          "updatedAt": "2020-05-27T21:03:59Z",
+          "comments": [
+            {
+              "originalPosition": 446,
+              "body": "This is just for consistency with the X25519/curve25519 notation. I think this is more clear, and lets us speak in terms of DH groups rather than specific curves.",
+              "createdAt": "2020-05-27T21:03:59Z",
+              "updatedAt": "2020-05-27T21:04:24Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDE5NjA3NDA0",
+          "commit": {
+            "abbreviatedOid": "79fff5f"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-05-27T21:04:44Z",
+          "updatedAt": "2020-05-27T21:04:44Z",
+          "comments": [
+            {
+              "originalPosition": 466,
+              "body": "Same as above!",
+              "createdAt": "2020-05-27T21:04:44Z",
+              "updatedAt": "2020-05-27T21:04:44Z"
             }
           ]
         }
