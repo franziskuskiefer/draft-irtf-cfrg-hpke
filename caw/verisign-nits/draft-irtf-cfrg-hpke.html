@@ -1975,12 +1975,10 @@ def OpenAuthPSK(enc, skR, info, aad, ct, psk, pskID, pkS):
           <h4 id="name-marshal">
 <a href="#section-7.1.1" class="section-number selfRef">7.1.1. </a><a href="#name-marshal" class="section-name selfRef">Marshal</a>
           </h4>
-<p id="section-7.1.1-1">For the groups based on NIST curves P-256, P-384 and P-521, the Marshal function
-of the DH scheme produces the normal (non-compressed) representation of the public
-key, according to <span>[<a href="#SECG" class="xref">SECG</a>]</span>.<a href="#section-7.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-7.1.1-2">For the groups based on X25519 and X448, the Marshal function is the identity
-function, as specified in <span>[<a href="#RFC7748" class="xref">RFC7748</a>]</span>, since these groups already use fixed-length
-byte strings for public keys.<a href="#section-7.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-7.1.1-1">For P-256, P-384 and P-521, the Marshal function of the DH scheme produces the
+normal (non-compressed) representation of the public key, according to <span>[<a href="#SECG" class="xref">SECG</a>]</span>.<a href="#section-7.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.1.1-2">For X25519 and X448, the Marshal function is the identity function, as specified
+in <span>[<a href="#RFC7748" class="xref">RFC7748</a>]</span>, since these groups already use fixed-length byte strings for public keys.<a href="#section-7.1.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="validation-of-inputs-and-outputs">
@@ -1993,14 +1991,14 @@ requires public key validation: the sender MUST validate the recipient's
 public key <code>pkR</code>; the recipient MUST validate the ephemeral public key
 <code>pkE</code>; in authenticated modes, the recipient MUST validate the sender's
 static public key <code>pkS</code>.<a href="#section-7.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-7.1.2-2">For the groups based on NIST curves P-256, P-384 and P-521, senders and recipients
+<p id="section-7.1.2-2">For P-256, P-384 and P-521, senders and recipients
 MUST perform full public-key validation on all public key inputs as
 defined in <span>[<a href="#keyagreement" class="xref">keyagreement</a>]</span>, which includes validating that a public
 key is on the curve.
 Additionally, one of the following checks MUST be ensured: the scalar
 given as input to DH is in the interval [1, n-1] where n is the prime
 order of the subgroup; the result of DH is not the point at infinity.<a href="#section-7.1.2-2" class="pilcrow">¶</a></p>
-<p id="section-7.1.2-3">For the groups based on X25519 and X448, validation of public keys
+<p id="section-7.1.2-3">For X25519 and X448, validation of public keys
 is not required. Senders and recipients MUST check whether the Diffie-Hellman
 shared secret is the all-zero value and abort if so, as described in
 <span>[<a href="#RFC7748" class="xref">RFC7748</a>]</span>.<a href="#section-7.1.2-3" class="pilcrow">¶</a></p>
